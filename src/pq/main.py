@@ -7,6 +7,7 @@ from textual.containers import Horizontal, Vertical
 from textual.widgets import Footer, Header, Input, Static
 from textual.widget import Widget
 
+from pq.completion import FuzzyMatcher, PathExtractor
 from pq.evaluator import QueryEvaluationError, evaluate_query
 from pq.output import OutputFormatter
 
@@ -37,6 +38,23 @@ class ResultDisplay(Static):
             self.update(formatted)
 
 
+class SuggestionBox(Static):
+    """Display fuzzy path suggestions."""
+
+    def update_suggestions(self, suggestions: list[str]) -> None:
+        """Update the suggestions display.
+
+        Args:
+            suggestions: List of suggestion strings
+        """
+        if not suggestions:
+            self.update("")
+            return
+
+        lines = "\n".join(f"  {s}" for s in suggestions[:10])
+        self.update(f"[dim]Suggestions:[/dim]\n{lines}")
+
+
 class QueryApp(App[None]):
     """Main Textual application for interactive Python querying."""
 
@@ -55,12 +73,18 @@ class QueryApp(App[None]):
         """
         self.data = data
         self.final_result: Any = None
+
+        path_extractor = PathExtractor(data)
+        self.paths = path_extractor.get_paths()
+        self.fuzzy_matcher = FuzzyMatcher(self.paths)
+
         super().__init__()
 
     def compose(self) -> ComposeResult:
         """Compose the UI."""
         yield Header()
         yield QueryPrompt()
+        yield SuggestionBox(id="suggestion-box")
         yield ResultDisplay(id="result-display")
         yield Footer()
 
@@ -76,11 +100,16 @@ class QueryApp(App[None]):
         """
         query = event.value
         result_display = self.query_one("#result-display", ResultDisplay)
+        suggestion_box = self.query_one("#suggestion-box", SuggestionBox)
 
         if not query.strip():
             result_display.update_result("")
+            suggestion_box.update_suggestions([])
             self.final_result = None
             return
+
+        suggestions = self.fuzzy_matcher.find_matches(query)
+        suggestion_box.update_suggestions(suggestions)
 
         try:
             result = evaluate_query(query, self.data)
