@@ -55,14 +55,28 @@ class SuggestionBox(Static):
         self.update(f"[dim]Suggestions:[/dim]\n{lines}")
 
 
+class StatusBar(Static):
+    """Display status and helpful hints."""
+
+    def set_status(self, message: str) -> None:
+        """Update the status message.
+
+        Args:
+            message: Status message to display
+        """
+        self.update(f"[dim]{message}[/dim]")
+
+
 class QueryApp(App[None]):
     """Main Textual application for interactive Python querying."""
 
     CSS_PATH = "styles.tcss"
+    TITLE = "pq - Interactive Python Query Tool"
+    SUB_TITLE = "Type Python expressions to query your data"
 
     BINDINGS = [
-        ("enter", "accept_query", "Accept query"),
-        ("ctrl+c", "quit", "Quit"),
+        ("enter", "accept_query", "Accept & Exit"),
+        ("ctrl+c", "quit", "Cancel & Quit"),
     ]
 
     def __init__(self, data: dict[str, Any]) -> None:
@@ -86,11 +100,16 @@ class QueryApp(App[None]):
         yield QueryPrompt()
         yield SuggestionBox(id="suggestion-box")
         yield ResultDisplay(id="result-display")
+        yield StatusBar(id="status-bar")
         yield Footer()
 
     def on_mount(self) -> None:
         """Set up the app on mount."""
         self.query_one("#query-input", Input).focus()
+        status_bar = self.query_one("#status-bar", StatusBar)
+        status_bar.set_status(
+            "Type a Python expression to query the data. Press Enter to exit."
+        )
 
     def on_input_changed(self, event: Input.Changed) -> None:
         """Handle input changes for real-time evaluation.
