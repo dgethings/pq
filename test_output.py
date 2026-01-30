@@ -1,7 +1,6 @@
 """Test script to verify output formatting with different result types."""
 
 from pq.output import OutputFormatter
-from pq.evaluator import evaluate_query, QueryEvaluationError
 from pathlib import Path
 from pq.loader import load_document
 
@@ -27,7 +26,7 @@ def test_output_formatting():
     for test_name, result in test_cases:
         print(f"Test: {test_name}")
         print(f"Type: {type(result).__name__}")
-        print(f"Formatted output:")
+        print("Formatted output:")
         formatted = OutputFormatter.format_output(result)
         print(formatted)
         print()

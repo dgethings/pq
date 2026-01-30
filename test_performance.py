@@ -3,7 +3,7 @@
 import time
 from pathlib import Path
 from pq.loader import load_document
-from pq.evaluator import evaluate_query, QueryEvaluationError
+from pq.evaluator import evaluate_query
 
 
 def test_performance():
@@ -31,7 +31,7 @@ def test_performance():
     total_time = 0
     for query in test_queries:
         start_time = time.perf_counter()
-        result = evaluate_query(query, data)
+        evaluate_query(query, data)
         end_time = time.perf_counter()
         elapsed_ms = (end_time - start_time) * 1000
         total_time += elapsed_ms

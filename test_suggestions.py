@@ -3,7 +3,7 @@
 from pathlib import Path
 from pq.loader import load_document
 from pq.completion import PathExtractor, FuzzyMatcher
-from pq.evaluator import evaluate_query, QueryEvaluationError
+from pq.evaluator import evaluate_query
 
 
 def test_suggestions_integration():

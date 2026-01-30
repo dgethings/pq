@@ -78,13 +78,13 @@ def evaluate_query(expression: str, data: dict[str, Any]) -> Any:
         error_msg = str(e)
         if "subscriptable" in error_msg:
             raise QueryEvaluationError(
-                f"Cannot use brackets on this type. "
-                f"Make sure you're accessing a dictionary or list, not a string or number."
+                "Cannot use brackets on this type. "
+                "Make sure you're accessing a dictionary or list, not a string or number."
             )
         elif "not iterable" in error_msg:
             raise QueryEvaluationError(
-                f"This value cannot be iterated over. "
-                f"Use it directly or check if it's a list or dict first."
+                "This value cannot be iterated over. "
+                "Use it directly or check if it's a list or dict first."
             )
         else:
             raise QueryEvaluationError(f"Type mismatch: {error_msg}")
@@ -101,10 +101,10 @@ def evaluate_query(expression: str, data: dict[str, Any]) -> Any:
         )
     except ValueError as e:
         raise QueryEvaluationError(f"Invalid value: {e}")
-    except IndexError as e:
+    except IndexError:
         raise QueryEvaluationError(
-            f"Index out of range. "
-            f"The list is shorter than the index you're trying to access."
+            "Index out of range. "
+            "The list is shorter than the index you're trying to access."
         )
     except Exception as e:
         raise QueryEvaluationError(f"Query evaluation failed: {e}")

@@ -3,7 +3,7 @@
 import tempfile
 from pathlib import Path
 from pq.loader import DocumentLoadError, load_document
-from pq.evaluator import evaluate_query, QueryEvaluationError
+from pq.evaluator import evaluate_query
 
 
 def test_edge_cases():

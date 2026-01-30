@@ -3,7 +3,7 @@
 from typing import Any
 
 from textual.app import App, ComposeResult
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal
 from textual.widgets import Footer, Header, Input, Static
 from textual.widget import Widget
 

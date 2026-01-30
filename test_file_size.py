@@ -28,7 +28,7 @@ def test_file_size_limit():
     print("Test 2: Non-existent file (should fail)")
     try:
         data = load_document(file_path=Path("nonexistent_file.json"))
-        print(f"Failed: Should have raised DocumentLoadError")
+        print("Failed: Should have raised DocumentLoadError")
     except DocumentLoadError as e:
         print(f"Success: Got expected error: {e}")
     print()
@@ -36,7 +36,7 @@ def test_file_size_limit():
     # Verify the MAX_FILE_SIZE constant is set correctly
     from pq.loader import MAX_FILE_SIZE
 
-    print(f"Test 3: MAX_FILE_SIZE constant")
+    print("Test 3: MAX_FILE_SIZE constant")
     print(f"MAX_FILE_SIZE = {MAX_FILE_SIZE} bytes ({MAX_FILE_SIZE / (1024**3):.0f} GB)")
     assert MAX_FILE_SIZE == 2 * 1024 * 1024 * 1024, "MAX_FILE_SIZE should be 2GB"
     print("Success: MAX_FILE_SIZE is correctly set to 2GB")

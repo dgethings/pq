@@ -14,13 +14,13 @@ def test_app_logic():
 
     print("Test 1: Simple query")
     result = evaluate_query("data['items'][0]['name']", data)
-    print(f"Query: data['items'][0]['name']")
+    print("Query: data['items'][0]['name']")
     print(f"Result: {result}")
     print()
 
     print("Test 2: List comprehension")
     result = evaluate_query("[item['name'] for item in data['items']]", data)
-    print(f"Query: [item['name'] for item in data['items']]")
+    print("Query: [item['name'] for item in data['items']]")
     print(f"Result: {result}")
     print()
 
@@ -28,7 +28,7 @@ def test_app_logic():
     result = evaluate_query(
         "[item for item in data['items'] if item['age'] > 25]", data
     )
-    print(f"Query: [item for item in data['items'] if item['age'] > 25]")
+    print("Query: [item for item in data['items'] if item['age'] > 25]")
     print(f"Result: {result}")
     print()
 
@@ -36,13 +36,13 @@ def test_app_logic():
     try:
         result = evaluate_query("data['nonexistent_key']", data)
     except QueryEvaluationError as e:
-        print(f"Query: data['nonexistent_key']")
+        print("Query: data['nonexistent_key']")
         print(f"Error (expected): {e}")
     print()
 
     print("Test 5: Metadata access")
     result = evaluate_query("data['metadata']['version']", data)
-    print(f"Query: data['metadata']['version']")
+    print("Query: data['metadata']['version']")
     print(f"Result: {result}")
     print()
 
