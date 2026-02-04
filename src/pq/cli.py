@@ -8,6 +8,7 @@ import typer
 from pq.evaluator import evaluate_query
 from pq.loader import DocumentLoadError, load_document, read_stdin
 from pq.types import FileTypes
+from rich import print
 
 
 app = typer.Typer()
@@ -28,14 +29,15 @@ def main(
     #         help="When reading from stdin you need to specify the file format"
     #     ),
     # ],
-) -> str:
+) -> None:
     """Main CLI entry point.
 
     Args:
         file_path: Optional file path argument
     """
     data = load_document(file_path=file_path)
-    return evaluate_query(query, data)
+    result = evaluate_query(query, data)
+    print(result)
 
 
 # if not query and not file_path:

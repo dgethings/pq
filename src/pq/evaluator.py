@@ -36,7 +36,7 @@ class QueryEvaluationError(Exception):
     """Raised when query evaluation fails."""
 
 
-def evaluate_query(expression: str, data: dict[str, Any]) -> str:
+def evaluate_query(expression: str, data: dict[str, Any]) -> dict[str, Any]:
     """Safely evaluate a Python expression with data context.
 
     Args:
@@ -60,8 +60,7 @@ def evaluate_query(expression: str, data: dict[str, Any]) -> str:
     }
 
     try:
-        result = eval(expression, restricted_globals, {})
-        return str(result)
+        return eval(expression, restricted_globals, {})
     except SyntaxError as e:
         raise QueryEvaluationError(
             f"Invalid Python syntax: {e.msg} at position {e.offset}. Check for missing quotes, brackets, or operators."
