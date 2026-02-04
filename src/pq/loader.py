@@ -5,6 +5,8 @@ from typing import Any
 import json
 import sys
 
+from pq.types import FileTypes
+
 
 MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024
 
@@ -14,7 +16,9 @@ class DocumentLoadError(Exception):
 
 
 def load_document(
-    file_path: Path | None = None, stdin_content: str | None = None
+    file_path: Path | None = None,
+    stdin_content: str | None = None,
+    format: FileTypes | None = None,
 ) -> dict[str, Any]:
     """Load a document from file path or stdin.
 
@@ -30,8 +34,8 @@ def load_document(
     """
     if file_path:
         return _load_from_file(file_path)
-    elif stdin_content:
-        return _load_from_string(stdin_content)
+    elif stdin_content and format:
+        return _load_from_string(stdin_content, format)
     else:
         raise DocumentLoadError("No file path or stdin content provided")
 
@@ -44,8 +48,7 @@ def _load_from_file(file_path: Path) -> dict[str, Any]:
     file_size = file_path.stat().st_size
     if file_size > MAX_FILE_SIZE:
         raise DocumentLoadError(
-            f"File too large ({file_size / (1024 * 1024 * 1024):.2f}GB). "
-            f"Maximum size is {MAX_FILE_SIZE / (1024 * 1024 * 1024):.0f}GB"
+            f"File too large ({file_size / (1024 * 1024 * 1024):.2f}GB). Maximum size is {MAX_FILE_SIZE / (1024 * 1024 * 1024):.0f}GB"
         )
 
     try:
@@ -57,9 +60,13 @@ def _load_from_file(file_path: Path) -> dict[str, Any]:
         raise DocumentLoadError(f"Failed to read file: {e}")
 
 
-def _load_from_string(content: str) -> dict[str, Any]:
+def _load_from_string(content: str, format: FileTypes) -> dict[str, Any]:
     """Load document from string (stdin)."""
-    return _parse_json(content, "stdin")
+    match format:
+        case "json":
+            return _parse_json(content, "stdin")
+        case _:
+            raise RuntimeError(f"{format} currently not supported")
 
 
 def _parse_json(content: str, source: str) -> dict[str, Any]:

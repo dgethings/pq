@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.scripts]
-pq = "pq.cli:main"
+pq = "pq.cli:app"
 
 [build-system]
 requires = ["uv_build>=0.9.27,<0.10.0"]

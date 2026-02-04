@@ -1,5 +1,7 @@
 """Main Textual application module."""
 
+from pathlib import Path
+import sys
 from typing import Any
 
 from textual.app import App, ComposeResult
@@ -142,4 +144,10 @@ class QueryApp(App[None]):
         """Accept the current query and exit."""
         if self.final_result is not None:
             OutputFormatter.print_to_stdout(self.final_result)
-        self.exit(self.final_result)
+            self.exit(result=self.final_result, return_code=0)
+        else:
+            self.exit(return_code=1)
+
+    async def action_quit(self) -> None:
+        """Quit without printing."""
+        self.exit(return_code=130)
