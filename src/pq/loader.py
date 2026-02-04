@@ -2,10 +2,12 @@
 
 from pathlib import Path
 from typing import Any
+from xml.parsers import expat
 import json
 import sys
 
 import typer
+import xmltodict
 import yaml
 
 from pq.types import FileTypes
@@ -62,6 +64,9 @@ def _load_from_file(file_path: Path) -> dict[str, Any]:
             case ".yaml" | ".yml":
                 content = file_path.read_text(encoding="utf-8")
                 return _parse_yaml(content, str(file_path))
+            case ".xml":
+                content = file_path.read_text(encoding="utf-8")
+                return _parse_xml(content, str(file_path))
             case _:
                 raise typer.BadParameter(
                     message=f"file type {file_path.suffix} is currently not supported"
@@ -79,6 +84,8 @@ def _load_from_string(content: str, format: FileTypes) -> dict[str, Any]:
             return _parse_json(content, "stdin")
         case "yaml":
             return _parse_yaml(content, "stdin")
+        case "xml":
+            return _parse_xml(content, "stdin")
         case _:
             raise RuntimeError(f"{format} currently not supported")
 
@@ -131,6 +138,32 @@ def _parse_yaml(content: str, source: str) -> dict[str, Any]:
         return data
     except yaml.YAMLError as e:
         raise DocumentLoadError(f"Invalid YAML in {source}: {e}")
+
+
+def _parse_xml(content: str, source: str) -> dict[str, Any]:
+    """Parse XML content.
+
+    Args:
+        content: XML string to parse
+        source: Source description for error messages
+
+    Returns:
+        Parsed XML as dictionary
+
+    Raises:
+        DocumentLoadError: If XML is invalid
+    """
+    try:
+        data = xmltodict.parse(content)
+        if not isinstance(data, dict):
+            raise DocumentLoadError(
+                f"Document must be an XML object (dict), got {type(data).__name__}"
+            )
+        return data
+    except expat.ExpatError as e:
+        raise DocumentLoadError(f"Invalid XML in {source}: {e}")
+    except Exception as e:
+        raise DocumentLoadError(f"Failed to parse XML from {source}: {e}")
 
 
 def read_stdin() -> str:
