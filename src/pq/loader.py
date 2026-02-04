@@ -5,6 +5,7 @@ from typing import Any
 from xml.parsers import expat
 import json
 import sys
+import tomllib
 
 import typer
 import xmltodict
@@ -67,6 +68,9 @@ def _load_from_file(file_path: Path) -> dict[str, Any]:
             case ".xml":
                 content = file_path.read_text(encoding="utf-8")
                 return _parse_xml(content, str(file_path))
+            case ".toml":
+                content = file_path.read_text(encoding="utf-8")
+                return _parse_toml(content, str(file_path))
             case _:
                 raise typer.BadParameter(
                     message=f"file type {file_path.suffix} is currently not supported"
@@ -86,6 +90,8 @@ def _load_from_string(content: str, format: FileTypes) -> dict[str, Any]:
             return _parse_yaml(content, "stdin")
         case "xml":
             return _parse_xml(content, "stdin")
+        case "toml":
+            return _parse_toml(content, "stdin")
         case _:
             raise RuntimeError(f"{format} currently not supported")
 
@@ -164,6 +170,26 @@ def _parse_xml(content: str, source: str) -> dict[str, Any]:
         raise DocumentLoadError(f"Invalid XML in {source}: {e}")
     except Exception as e:
         raise DocumentLoadError(f"Failed to parse XML from {source}: {e}")
+
+
+def _parse_toml(content: str, source: str) -> dict[str, Any]:
+    """Parse TOML content.
+
+    Args:
+        content: TOML string to parse
+        source: Source description for error messages
+
+    Returns:
+        Parsed TOML as dictionary
+
+    Raises:
+        DocumentLoadError: If TOML is invalid
+    """
+    try:
+        data = tomllib.loads(content)
+        return data
+    except tomllib.TOMLDecodeError as e:
+        raise DocumentLoadError(f"Invalid TOML in {source}: {e}")
 
 
 def read_stdin() -> str:
