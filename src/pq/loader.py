@@ -4,10 +4,8 @@ from pathlib import Path
 from typing import Any
 from xml.parsers import expat
 import json
-import sys
 import tomllib
 
-import typer
 import xmltodict
 import yaml
 
@@ -21,32 +19,7 @@ class DocumentLoadError(Exception):
     """Raised when document loading fails."""
 
 
-def load_document(
-    file_path: Path | None = None,
-    stdin_content: str | None = None,
-    format: FileTypes | None = None,
-) -> dict[str, Any]:
-    """Load a document from file path or stdin.
-
-    Args:
-        file_path: Path to the file to load
-        stdin_content: Content from stdin if available
-
-    Returns:
-        Parsed document as a dictionary
-
-    Raises:
-        DocumentLoadError: If file loading or parsing fails
-    """
-    if file_path:
-        return _load_from_file(file_path)
-    elif stdin_content and format:
-        return _load_from_string(stdin_content, format)
-    else:
-        raise DocumentLoadError("No file path or stdin content provided")
-
-
-def _load_from_file(file_path: Path) -> dict[str, Any]:
+def content_from_file(file_path: Path) -> tuple[str, FileTypes]:
     """Load document from file path."""
     if not file_path.exists():
         raise DocumentLoadError(f"File not found: {file_path}")
@@ -57,43 +30,43 @@ def _load_from_file(file_path: Path) -> dict[str, Any]:
             f"File too large ({file_size / (1024 * 1024 * 1024):.2f}GB). Maximum size is {MAX_FILE_SIZE / (1024 * 1024 * 1024):.0f}GB"
         )
 
-    try:
-        match file_path.suffix:
-            case ".json":
-                content = file_path.read_text(encoding="utf-8")
-                return _parse_json(content, str(file_path))
-            case ".yaml" | ".yml":
-                content = file_path.read_text(encoding="utf-8")
-                return _parse_yaml(content, str(file_path))
-            case ".xml":
-                content = file_path.read_text(encoding="utf-8")
-                return _parse_xml(content, str(file_path))
-            case ".toml":
-                content = file_path.read_text(encoding="utf-8")
-                return _parse_toml(content, str(file_path))
-            case _:
-                raise typer.BadParameter(
-                    message=f"file type {file_path.suffix} is currently not supported"
-                )
-    except UnicodeDecodeError:
-        raise DocumentLoadError(f"File encoding error: {file_path}")
-    except OSError as e:
-        raise DocumentLoadError(f"Failed to read file: {e}")
+    ft = FileTypes(file_path.suffix.lstrip("."))
+    return file_path.read_text(encoding="utf-8"), ft
 
 
-def _load_from_string(content: str, format: FileTypes) -> dict[str, Any]:
-    """Load document from string (stdin)."""
-    match format:
+def load_content(content: str, file_type: FileTypes, src: str) -> dict[str, Any]:
+    """Load content using parser based on file type."""
+    match file_type:
         case "json":
-            return _parse_json(content, "stdin")
+            return _parse_json(content, src)
         case "yaml":
-            return _parse_yaml(content, "stdin")
+            return _parse_yaml(content, src)
         case "xml":
-            return _parse_xml(content, "stdin")
+            return _parse_xml(content, src)
         case "toml":
-            return _parse_toml(content, "stdin")
+            return _parse_toml(content, src)
         case _:
-            raise RuntimeError(f"{format} currently not supported")
+            raise RuntimeError(f"{file_type} currently not supported")
+
+
+def _validate_dict(data: Any, format_name: str) -> dict[str, Any]:
+    """Validate that parsed data is a dictionary.
+
+    Args:
+        data: Parsed data to validate
+        format_name: Name of the format for error messages
+
+    Returns:
+        The validated data
+
+    Raises:
+        DocumentLoadError: If data is not a dict
+    """
+    if not isinstance(data, dict):
+        raise DocumentLoadError(
+            f"Document must be a {format_name} object (dict), got {type(data).__name__}"
+        )
+    return data
 
 
 def _parse_json(content: str, source: str) -> dict[str, Any]:
@@ -111,11 +84,7 @@ def _parse_json(content: str, source: str) -> dict[str, Any]:
     """
     try:
         data = json.loads(content)
-        if not isinstance(data, dict):
-            raise DocumentLoadError(
-                f"Document must be a JSON object (dict), got {type(data).__name__}"
-            )
-        return data
+        return _validate_dict(data, "JSON")
     except json.JSONDecodeError as e:
         raise DocumentLoadError(
             f"Invalid JSON in {source}: {e.msg} at line {e.lineno}, column {e.colno}"
@@ -137,11 +106,7 @@ def _parse_yaml(content: str, source: str) -> dict[str, Any]:
     """
     try:
         data = yaml.safe_load(content)
-        if not isinstance(data, dict):
-            raise DocumentLoadError(
-                f"Document must be a YAML object (dict), got {type(data).__name__}"
-            )
-        return data
+        return _validate_dict(data, "YAML")
     except yaml.YAMLError as e:
         raise DocumentLoadError(f"Invalid YAML in {source}: {e}")
 
@@ -161,11 +126,7 @@ def _parse_xml(content: str, source: str) -> dict[str, Any]:
     """
     try:
         data = xmltodict.parse(content)
-        if not isinstance(data, dict):
-            raise DocumentLoadError(
-                f"Document must be an XML object (dict), got {type(data).__name__}"
-            )
-        return data
+        return _validate_dict(data, "XML")
     except expat.ExpatError as e:
         raise DocumentLoadError(f"Invalid XML in {source}: {e}")
     except Exception as e:
@@ -186,16 +147,6 @@ def _parse_toml(content: str, source: str) -> dict[str, Any]:
         DocumentLoadError: If TOML is invalid
     """
     try:
-        data = tomllib.loads(content)
-        return data
+        return tomllib.loads(content)
     except tomllib.TOMLDecodeError as e:
         raise DocumentLoadError(f"Invalid TOML in {source}: {e}")
-
-
-def read_stdin() -> str:
-    """Read content from stdin.
-
-    Returns:
-        Content from stdin as string
-    """
-    return sys.stdin.read()

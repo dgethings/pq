@@ -6,7 +6,7 @@ import typer
 from rich import print
 
 from pq.evaluator import evaluate_query
-from pq.loader import load_document
+from pq.loader import content_from_file, load_content
 from pq.cli_arg import Query, FilePath, FileType, Version
 
 app = typer.Typer()
@@ -21,7 +21,7 @@ def main(
 ) -> None:
     """Run a query against a document.
 
-    Query a document using JSONPath or similar query language.
+    Query a document using Python syntax.
     Reads from a file or stdin and evaluates the query against the document data.
     """
     data = None
@@ -29,12 +29,16 @@ def main(
         raise typer.BadParameter(
             "Must supply either file path or if reading from stdin must supply file type"
         )
-    if file_type:
-        data = load_document(stdin_content=sys.stdin.read(), format=file_type)
+    src = "stdin"
     if file_path:
-        data = load_document(file_path=file_path)
-    if data is None:
-        raise typer.BadParameter("Ummm, how did we get here?")
+        content, file_type = content_from_file(file_path=file_path)
+        src = str(file_path)
+    else:
+        content = sys.stdin.read()
+    if not file_type:
+        raise typer.BadParameter("when reading from stdin you must supply a file type")
+
+    data = load_content(content=content, file_type=file_type, src=src)
     result = evaluate_query(query, data)
     print(result)
 
