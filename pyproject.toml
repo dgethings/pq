@@ -23,5 +23,13 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "python-semantic-release>=10.5.3",
     "textual-dev>=1.8.0",
 ]
+
+[semantic_release]
+major_on_zero = false
+allow_zero_version = true
+repo_dir = "/Users/dgethings/git/pq"
+version_toml = ["pyproject.toml:project.version"]
+
