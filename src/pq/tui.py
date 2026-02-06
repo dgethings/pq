@@ -15,11 +15,24 @@ from pq.output import OutputFormatter
 class QueryPrompt(Widget):
     """Input prompt for Python expressions."""
 
+    def __init__(self, query: str) -> None:
+        self.query_string: str = query
+        super().__init__()
+
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        """Handle Enter key press in the input field.
+
+        Args:
+            event: Input submitted event
+        """
+        event.stop()
+        self.app.action_accept_query()
+
     def compose(self) -> ComposeResult:
         with Horizontal():
             yield Static("> ", id="prompt")
             yield Input(
-                value="_",
+                value=self.query_string,
                 placeholder="Enter Python expression, use '_' to access data",
                 id="query-input",
             )
@@ -79,7 +92,6 @@ class QueryApp(App[None]):
     SUB_TITLE = "Type Python expressions to query your data"
 
     BINDINGS = [
-        ("enter", "accept_query", "Accept & Exit"),
         ("ctrl+c", "quit", "Cancel & Quit"),
     ]
 
@@ -95,13 +107,14 @@ class QueryApp(App[None]):
         path_extractor = PathExtractor(data)
         self.paths = path_extractor.get_paths()
         self.fuzzy_matcher = FuzzyMatcher(self.paths)
+        self.query_string: str = "_"
 
         super().__init__()
 
     def compose(self) -> ComposeResult:
         """Compose the UI."""
         yield Header()
-        yield QueryPrompt()
+        yield QueryPrompt(query=self.query_string)
         yield SuggestionBox(id="suggestion-box")
         yield ResultDisplay(id="result-display")
         yield StatusBar(id="status-bar")
@@ -137,6 +150,7 @@ class QueryApp(App[None]):
         try:
             result = evaluate_query(query, self.data)
             result_display.update_result(result, is_error=False)
+            self.query_string = query
             self.final_result = result
         except QueryEvaluationError as e:
             result_display.update_result(str(e), is_error=True)
@@ -144,12 +158,7 @@ class QueryApp(App[None]):
 
     def action_accept_query(self) -> None:
         """Accept the current query and exit."""
-        if self.final_result is not None:
-            return self.final_result
-            OutputFormatter.print_to_stdout(self.final_result)
-            self.exit(result=self.final_result, return_code=0)
-        else:
-            self.exit(return_code=1)
+        self.exit(return_code=0)
 
     async def action_quit(self) -> None:
         """Quit without printing."""

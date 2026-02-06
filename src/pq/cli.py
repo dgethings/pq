@@ -36,14 +36,17 @@ def main(
         content, file_type = content_from_file(file_path=Path(query))
         data = load_content(content=content, file_type=file_type, src=query)
         tui = QueryApp(data=data)
-        result = tui.run()
+        tui.run()
+        result = str(tui.query_string)
+        print(result)
+        raise typer.Exit(0)
 
-    if file_path:
+    if query and file_path:
         content, file_type = content_from_file(file_path=file_path)
         src = str(file_path)
-    else:
+    if file_type and not (query or file_path):
         content = sys.stdin.read()
-    if not file_type:
+    if not file_type and not (file_path and query):
         raise typer.BadParameter("when reading from stdin you must supply a file type")
 
     data = load_content(content=content, file_type=file_type, src=src)
