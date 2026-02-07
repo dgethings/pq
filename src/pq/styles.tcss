@@ -31,12 +31,14 @@ QueryPrompt {
 }
 
 #suggestion-box {
-    height: 10;
+    height: 0;
     display: none;
 }
 
 #suggestion-box.visible {
     display: block;
+    height: auto;
+    max-height: 10;
 }
 
 .error {
