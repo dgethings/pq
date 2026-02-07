@@ -30,6 +30,13 @@ dev = [
 [semantic_release]
 major_on_zero = false
 allow_zero_version = true
-repo_dir = "/Users/dgethings/git/pq"
+repo_dir = "."
 version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+build_command = "uv build"
+distribution_dir = "dist"
+changelog_file = "CHANGELOG.md"
+commit_message = "chore(release): {version}"
+tag_format = "v{version}"
+hvcs = "github"
 
