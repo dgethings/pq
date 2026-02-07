@@ -68,10 +68,12 @@ class SuggestionBox(Static):
         """
         if not suggestions:
             self.update("")
+            self.remove_class("visible")
             return
 
         lines = "\n".join(f"  {s}" for s in suggestions[:10])
         self.update(f"[dim]Suggestions:[/dim]\n{lines}")
+        self.add_class("visible")
 
 
 class StatusBar(Static):

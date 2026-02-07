@@ -31,7 +31,6 @@ QueryPrompt {
 }
 
 #suggestion-box {
-    dock: top;
     height: 10;
     display: none;
 }
