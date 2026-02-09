@@ -41,6 +41,12 @@ QueryPrompt {
     max-height: 10;
 }
 
+#suggestion-list {
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
 .error {
     color: red;
     text-style: bold;

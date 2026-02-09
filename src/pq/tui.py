@@ -5,13 +5,35 @@ from typing import Any, ClassVar, cast
 from textual._path import CSSPathType
 from textual.app import App, ComposeResult
 from textual.binding import BindingType
-from textual.containers import Horizontal
-from textual.widgets import Footer, Header, Input, Static
+from textual.widgets import Footer, Header, OptionList, Static
+from textual.widgets.option_list import Option
+from textual.widgets._input import Input as BaseInput
 from textual.widget import Widget
 
 from pq.completion import FuzzyMatcher, PathExtractor
 from pq.evaluator import QueryEvaluationError, evaluate_query
 from pq.output import OutputFormatter
+
+
+class QueryInput(BaseInput):
+    """Custom input widget with tab support."""
+
+    def on_key(self, event) -> None:
+        """Handle key events for tab navigation.
+
+        Args:
+            event: Key event
+        """
+        if event.key == "tab":
+            event.stop()
+            option_list = cast(QueryApp, self.app).query_one(
+                "#suggestion-list", OptionList
+            )
+            suggestion_box = cast(QueryApp, self.app).query_one(
+                "#suggestion-box", SuggestionBox
+            )
+            if suggestion_box.suggestions:
+                option_list.focus()
 
 
 class QueryPrompt(Widget):
@@ -21,7 +43,7 @@ class QueryPrompt(Widget):
         self.query_string: str = query
         super().__init__()
 
-    def on_input_submitted(self, event: Input.Submitted) -> None:
+    def on_input_submitted(self, event: QueryInput.Submitted) -> None:
         """Handle Enter key press in the input field.
 
         Args:
@@ -31,7 +53,7 @@ class QueryPrompt(Widget):
         cast(QueryApp, self.app).action_accept_query()
 
     def compose(self) -> ComposeResult:
-        yield Input(
+        yield QueryInput(
             value=self.query_string,
             placeholder="Enter Python expression, use '_' to access data",
             id="query-input",
@@ -55,8 +77,12 @@ class ResultDisplay(Static):
             self.update(formatted)
 
 
-class SuggestionBox(Static):
+class SuggestionBox(Widget):
     """Display fuzzy path suggestions."""
+
+    def __init__(self, id: str | None = None) -> None:
+        self.suggestions: list[str] = []
+        super().__init__(id=id)
 
     def update_suggestions(self, suggestions: list[str]) -> None:
         """Update the suggestions display.
@@ -64,14 +90,31 @@ class SuggestionBox(Static):
         Args:
             suggestions: List of suggestion strings
         """
-        if not suggestions:
-            self.update("")
-            self.remove_class("visible")
-            return
+        self.suggestions = suggestions[:10]
+        option_list = self.query_one("#suggestion-list", OptionList)
+        option_list.clear_options()
+        for suggestion in self.suggestions:
+            option_list.add_option(Option(suggestion))
 
-        lines = "\n".join(f"  {s}" for s in suggestions[:10])
-        self.update(f"[dim]Suggestions:[/dim]\n{lines}")
-        self.add_class("visible")
+        if not suggestions:
+            self.remove_class("visible")
+        else:
+            self.add_class("visible")
+
+    def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
+        """Handle suggestion selection.
+
+        Args:
+            event: Option selected event
+        """
+        event.stop()
+        suggestion = str(event.option.prompt)
+        input_widget = cast(QueryApp, self.app).query_one("#query-input", QueryInput)
+        input_widget.value = suggestion
+        input_widget.focus()
+
+    def compose(self) -> ComposeResult:
+        yield OptionList(id="suggestion-list")
 
 
 class StatusBar(Static):
@@ -124,13 +167,13 @@ class QueryApp(App[None]):
 
     def on_mount(self) -> None:
         """Set up the app on mount."""
-        self.query_one("#query-input", Input).focus()
+        self.query_one("#query-input", QueryInput).focus()
         status_bar = self.query_one("#status-bar", StatusBar)
         status_bar.set_status(
             "Type a Python expression to query the data. Press Enter to exit."
         )
 
-    def on_input_changed(self, event: Input.Changed) -> None:
+    def on_input_changed(self, event: QueryInput.Changed) -> None:
         """Handle input changes for real-time evaluation.
 
         Args:
