@@ -7,7 +7,7 @@ from textual.app import App, ComposeResult
 from textual.binding import BindingType
 from textual.widgets import Footer, Header, OptionList, Static
 from textual.widgets.option_list import Option
-from textual.widgets._input import Input as BaseInput
+from textual.widgets._input import Input as BaseInput, Selection
 from textual.widget import Widget
 
 from pq.completion import FuzzyMatcher, PathExtractor
@@ -43,6 +43,11 @@ class QueryPrompt(Widget):
     def __init__(self, query: str) -> None:
         self.query_string: str = query
         super().__init__()
+
+    def on_mount(self) -> None:
+        """Position cursor at end of input value to prevent replacement."""
+        input_widget = self.query_one("#query-input", QueryInput)
+        input_widget.cursor_position = len(self.query_string)
 
     def on_input_submitted(self, event: QueryInput.Submitted) -> None:
         """Handle Enter key press in the input field.
@@ -113,6 +118,8 @@ class SuggestionBox(Widget):
         input_widget = cast(QueryApp, self.app).query_one("#query-input", QueryInput)
         input_widget.value = suggestion
         input_widget.focus()
+        end_pos = len(suggestion)
+        input_widget.selection = Selection.cursor(end_pos)
 
     def compose(self) -> ComposeResult:
         yield OptionList(id="suggestion-list")
