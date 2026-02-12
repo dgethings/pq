@@ -24,6 +24,38 @@ How it works:
 
 This file contains guidelines and commands for agentic coding assistants working in this repository.
 
+## Commit Message Guidelines (CRITICAL)
+
+This project uses **python-semantic-release** to automate version management and GitHub releases. When committing changes, you MUST use conventional commit format to trigger appropriate version bumps.
+
+### Commit Message Format
+```
+<type>: <description>
+```
+
+### Commit Types and Version Impact
+- **feat:** New feature - triggers **MINOR** version bump (0.2.0 → 0.3.0)
+- **fix:** Bug fix - triggers **PATCH** version bump (0.2.0 → 0.2.1)
+- **perf:** Performance improvement - triggers **PATCH** version bump
+- **chore:** Maintenance tasks (config, deps) - **NO** version bump
+- **docs:** Documentation changes - **NO** version bump
+- **test:** Test changes - **NO** version bump
+- **refactor:** Code restructuring - **NO** version bump
+- **style:** Code style/formatting - **NO** version bump
+
+### Examples
+- `feat: add fuzzy search for query results`
+- `fix: prevent crash when empty query submitted`
+- `perf: optimize file parsing for large XML files`
+- `chore: update ruff to v0.9.0`
+- `docs: clarify installation instructions`
+- `test: add coverage for QueryApp`
+- `refactor: extract suggestion list to separate widget`
+- `style: apply ruff formatting`
+
+### IMPORTANT: Only Use These Types
+When creating commits, ONLY use the types listed above. Other types will NOT trigger version bumps and may cause issues with semantic-release.
+
 ## Project Overview
 
 This is a Python CLI/TUI application using:
