@@ -2,6 +2,39 @@
 
 <!-- version list -->
 
+## v0.3.0 (2026-02-14)
+
+### Bug Fixes
+
+- Install uv in GitHub Actions release workflow
+  ([`d968ee0`](https://github.com/dgethings/pq/commit/d968ee08bf5bf9e07f1c36a93948c7f1c5ba8c00))
+
+- Prevent input value replacement by highlighting
+  ([`d155904`](https://github.com/dgethings/pq/commit/d1559044e7b37c6120597f32fa2942c6adb204c9))
+
+### Chores
+
+- Exclude docs/ directory from git
+  ([`eedf522`](https://github.com/dgethings/pq/commit/eedf522562a9c919c47f31930bb8b32dee8f0f78))
+
+- More psr GH fixing
+  ([`b78d2ed`](https://github.com/dgethings/pq/commit/b78d2edb65a565c6fa53917a12b0bc44e93b382b))
+
+- More psr release fixing
+  ([`e263c06`](https://github.com/dgethings/pq/commit/e263c06773c03efee310902d56b5d1ffa47a13a4))
+
+- Try astral's GH action to install uv
+  ([`ffacc46`](https://github.com/dgethings/pq/commit/ffacc46d7eb430e94089f7466965ae5617cbcdb2))
+
+- Try psr github action config
+  ([`bbb86d4`](https://github.com/dgethings/pq/commit/bbb86d4c1e2bc7b105df275ded721f7ad0a3fc18))
+
+### Features
+
+- Add automated GitHub releases with semantic versioning
+  ([`c886d71`](https://github.com/dgethings/pq/commit/c886d71a20b0a0e1acf25b3c9bd764f9dd25871b))
+
+
 ## v0.2.0 (2026-02-09)
 
 ### Bug Fixes
