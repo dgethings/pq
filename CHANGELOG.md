@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.7.0 (2026-02-14)
+
+### Features
+
+- Add syntax highlighting for results and suggestions using theme colors
+  ([`89bbe14`](https://github.com/dgethings/pq/commit/89bbe145e4c4c27ab27a3486ba763b912b6db14d))
+
+
 ## v0.6.0 (2026-02-14)
 
 ### Features
