@@ -102,10 +102,13 @@ class SuggestionBox(Widget):
         for suggestion in self.suggestions:
             option_list.add_option(Option(suggestion))
 
+        header = self.query_one("#suggestion-header", SectionHeader)
         if not suggestions:
             self.remove_class("visible")
+            header.remove_class("visible")
         else:
             self.add_class("visible")
+            header.add_class("visible")
 
     def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
         """Handle suggestion selection.
@@ -122,7 +125,15 @@ class SuggestionBox(Widget):
         input_widget.selection = Selection.cursor(end_pos)
 
     def compose(self) -> ComposeResult:
+        yield SectionHeader("Suggestions", id="suggestion-header")
         yield OptionList(id="suggestion-list")
+
+
+class SectionHeader(Static):
+    """Section header for UI sections."""
+
+    def __init__(self, title: str, id: str | None = None) -> None:
+        super().__init__(f"[dim]{title}[/dim]", id=id)
 
 
 class StatusBar(Static):
@@ -169,6 +180,7 @@ class QueryApp(App[None]):
         yield Header()
         yield QueryPrompt(query=self.query_string)
         yield SuggestionBox(id="suggestion-box")
+        yield SectionHeader("Results", id="results-header")
         yield ResultDisplay(id="result-display")
         yield StatusBar(id="status-bar")
         yield Footer()

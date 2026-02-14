@@ -41,10 +41,26 @@ QueryPrompt {
     max-height: 10;
 }
 
+#suggestion-header {
+    height: 0;
+    display: none;
+    padding: 0 1;
+}
+
+#suggestion-header.visible {
+    height: 1;
+    display: block;
+}
+
 #suggestion-list {
     border: none;
     background: transparent;
     padding: 0;
+}
+
+#results-header {
+    height: 1;
+    padding: 0 1;
 }
 
 .error {
