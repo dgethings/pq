@@ -7,7 +7,7 @@ from pq.types import FileTypes
 
 def version_callback(v: bool) -> None:
     if v:
-        print(f"pq Version: {importlib.metadata.version(distribution_name='pq')}")
+        print(f"pq Version: {importlib.metadata.version(distribution_name='pq-cli')}")
         raise typer.Exit(0)
 
 
