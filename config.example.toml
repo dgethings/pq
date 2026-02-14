@@ -1,4 +1,4 @@
-# pq configuration file
+# pq-cli configuration file
 # Copy this file to ~/.config/pq/config.toml or ./.pq.toml
 
 [theme]

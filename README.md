@@ -1,8 +1,8 @@
-# pq
+# pq-cli
 
 <div align="center">
 
-**Interactive Python Query Tool**
+**Interactive Python Query CLI Tool**
 
 [![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
@@ -10,7 +10,7 @@
 
 </div>
 
-`pq` is a command-line tool that enables interactive querying of structured documents using Python expressions. It provides a real-time terminal UI (TUI) where you can type Python data structure syntax and instantly see matching results.
+`pq-cli` is a command-line tool that enables interactive querying of structured documents using Python expressions. It provides a real-time terminal UI (TUI) where you can type Python data structure syntax and instantly see matching results.
 
 ## Features
 
@@ -35,28 +35,40 @@ I honestly don't know if that is a good idea. It might utterly useless. It might
 
 ### From PyPI (recommended)
 
+#### Using pip
 ```bash
-pip install pq
+pip install pq-cli
 ```
 
+#### Using uv
 ```bash
-uv add pq
+uv add pq-cli
+```
+
+#### Using uv tool install
+```bash
+uv tool install pq-cli
+```
+
+#### Using uvx (run without installing)
+```bash
+uvx pq-cli "_" data.json
 ```
 
 ### From source with uv (recommended for development)
 
 ```bash
-git clone https://github.com/yourusername/pq.git
-cd pq
+git clone https://github.com/dgethings/pq-cli.git
+cd pq-cli
 uv sync
-uv run pq --help
+uv run pq-cli --help
 ```
 
 ### From source with pip
 
 ```bash
-git clone https://github.com/yourusername/pq.git
-cd pq
+git clone https://github.com/dgethings/pq-cli.git
+cd pq-cli
 pip install -e .
 ```
 
@@ -64,25 +76,25 @@ pip install -e .
 
 ```bash
 # Query a JSON file
-pq "_" examples/employees.json
+pq-cli "_" examples/employees.json
 
 # Query a YAML file
-pq "_" examples/products.yaml
+pq-cli "_" examples/products.yaml
 
 # Query a TOML file
-pq "_" examples/products.toml
+pq-cli "_" examples/products.toml
 
 # Query an XML file
-pq "_" examples/products.xml
+pq-cli "_" examples/products.xml
 
 # Use a specific theme
-pq "_" examples/employees.json --theme dracula
+pq-cli "_" examples/employees.json --theme dracula
 
 # Pipe from another command
-cat "_" examples/users.json | pq --format json
+cat "_" examples/users.json | pq-cli --format json
 
 # Query and pipe to another tool
-pq "_" examples/employees.json | jq '.'
+pq-cli "_" examples/employees.json | jq '.'
 ```
 
 ## Usage
@@ -169,10 +181,10 @@ Override config file with `--theme` or `-t`:
 
 ```bash
 # Use dracula theme
-pq "_" data.json --theme dracula
+pq-cli "_" data.json --theme dracula
 
 # Use tokyo-night theme
-pq "_" data.yaml -t tokyo-night
+pq-cli "_" data.yaml -t tokyo-night
 ```
 
 ### Priority Order
@@ -189,7 +201,7 @@ Theme selection follows this priority (highest to lowest):
 ### Example 1: Query Employee Data
 
 ```bash
-pq "_" examples/employees.json
+pq-cli "_" examples/employees.json
 ```
 
 Query: Find all engineers in the Engineering department
@@ -213,7 +225,7 @@ sum(emp['salary'] for emp in _['employees']) / len(data['employees'])
 ### Example 2: Query Product Inventory
 
 ```bash
-pq "_" examples/products.yaml
+pq-cli "_" examples/products.yaml
 ```
 
 Query: Find products in Electronics category
@@ -237,7 +249,7 @@ sum(prod['price'] * prod['stock'] for prod in _['products'])
 ### Example 3: Query User Settings
 
 ```bash
-pq "_" examples/users.json
+pq-cli "_" examples/users.json
 ```
 
 Query: Get all active users with dark theme
@@ -337,10 +349,10 @@ pip install -e .
 
 ```bash
 # Run with uv
-uv run pq "_" examples/employees.json
+uv run pq-cli "_" examples/employees.json
 
 # Or if installed with pip
-pq "_" examples/employees.json
+pq-cli "_" examples/employees.json
 ```
 
 ### Code Quality
@@ -373,8 +385,8 @@ uv run pytest --cov=pq --cov-report=html
 
 Contributions are welcome! Please feel free to:
 
-1. Report bugs via [GitHub Issues](https://github.com/yourusername/pq/issues)
-2. Suggest new features via [GitHub Discussions](https://github.com/yourusername/pq/discussions)
+1. Report bugs via [GitHub Issues](https://github.com/dgethings/pq-cli/issues)
+2. Suggest new features via [GitHub Discussions](https://github.com/dgethings/pq-cli/discussions)
 3. Submit pull requests for bug fixes or new features
 
 Before submitting PRs:
@@ -392,5 +404,5 @@ Built with:
 
 ## Links
 
-- [Issue Tracker](https://github.com/dgethings/pq/issues)
-- [Changelog](https://github.com/dgethings/pq/blob/main/CHANGELOG.md)
+- [Issue Tracker](https://github.com/dgethings/pq-cli/issues)
+- [Changelog](https://github.com/dgethings/pq-cli/blob/main/CHANGELOG.md)

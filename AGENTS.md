@@ -84,13 +84,13 @@ uv run ruff format --check .
 ### Running the Application
 ```bash
 # Run the main application
-uv run pq
+uv run pq-cli
 
 # Run main module directly
-uv run python -m pq.main
+uv run python -m pq.cli
 
-# Run with entry point
-uv run python -m pq.main
+# Or use uvx to run without installation
+uvx pq-cli "_" data.json
 ```
 
 ### Running Tests
@@ -176,7 +176,7 @@ src/pq/
 - Use `compose(self) -> ComposeResult:` to define widget hierarchy
 - Use `yield` to compose child widgets
 - Export app instance for CLI entry point (e.g., `app = MyApp()`)
-- Entry point defined in pyproject.toml: `pq = "pq.main:app"`
+- Entry point defined in pyproject.toml: `pq-cli = "pq.cli:app"`
 
 ### Widget Structure
 - Custom widgets inherit from `textual.widget.Widget` or subclasses like `Static`

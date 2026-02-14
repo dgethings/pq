@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.8.0 (TBD)
+
+### Features
+
+- Rename package from `pq` to `pq-cli` for PyPI publication
+- Add MIT license to package
+
+
 ## v0.7.0 (2026-02-14)
 
 ### Features
