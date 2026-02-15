@@ -149,23 +149,72 @@ class FuzzyMatcher:
 
         return self._filter_to_next_level(self.paths, query)[:max_results]
 
-    def _calculate_score(self, path: str, query: str) -> int:
-        """Calculate fuzzy match score.
+    def get_keys_at_path(self, base_path: str) -> list[str]:
+        """Get available keys at a given path.
 
         Args:
-            path: Path string to score
-            query: Query string
+            base_path: The path to get keys for (e.g., "_" or "_['items']")
 
         Returns:
-            Score (higher is better)
+            List of available keys (string keys or integer indices)
         """
-        if query in path:
-            return len(query)
+        keys: set[str] = set()
 
-        parts = path.split("['")
-        if len(parts) > 1:
-            key_part = parts[-1].rstrip("']")
-            if query in key_part.lower():
-                return len(query) * 2
+        for path in self.paths:
+            if not path.startswith(base_path):
+                continue
 
-        return 0
+            remaining = path[len(base_path) :]
+            if not remaining.startswith("[") or len(remaining) < 2:
+                continue
+
+            bracket_content = remaining[1:].split("]")[0]
+
+            if bracket_content.startswith("'"):
+                keys.add(bracket_content.strip("'"))
+            elif bracket_content.startswith('"'):
+                keys.add(bracket_content.strip('"'))
+            elif bracket_content.isdigit():
+                keys.add(bracket_content)
+
+        return sorted(
+            keys, key=lambda x: (not x.isdigit(), int(x) if x.isdigit() else x)
+        )
+
+    def get_common_prefix(self, keys: list[str]) -> str:
+        """Get longest common prefix of a list of keys.
+
+        Args:
+            keys: List of keys to find common prefix of
+
+        Returns:
+            Longest common prefix string
+        """
+        if not keys:
+            return ""
+        if len(keys) == 1:
+            return keys[0]
+
+        first = keys[0]
+        for i, char in enumerate(first):
+            for key in keys[1:]:
+                if i >= len(key) or key[i] != char:
+                    return first[:i]
+        return first
+
+    def find_keys_at_path(self, base_path: str, prefix: str) -> list[str]:
+        """Find keys at a given path that match a prefix.
+
+        Args:
+            base_path: The path to get keys for
+            prefix: Prefix to filter keys
+
+        Returns:
+            List of matching keys
+        """
+        all_keys = self.get_keys_at_path(base_path)
+        if not prefix:
+            return all_keys
+
+        prefix_lower = prefix.lower()
+        return [k for k in all_keys if k.lower().startswith(prefix_lower)]

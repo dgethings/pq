@@ -17,7 +17,8 @@
 - **Real-time query evaluation** - See results update instantly as you type
 - **Pure Python syntax** - No DSL to learn, use familiar Python expressions
 - **Multiple format support** - Query JSON, YAML, XML, and TOML files
-- **Fuzzy path completion** - Get smart suggestions as you type
+- **Tab key completion** - Press Tab to complete dictionary keys while typing
+- **Fuzzy path suggestions** - Get smart suggestions as you type
 - **Seamless piping** - Exit with Enter and pipe results to other commands
 - **Safe evaluation** - Only safe builtins available
 - **Color themes** - Choose from 18 built-in Textual themes
@@ -303,6 +304,7 @@ Query: Find users with admin role
 | Key | Action |
 |-----|--------|
 | `Enter` | Accept query, exit, and print result to stdout |
+| `Tab` | Complete dictionary keys when typing inside `_['']` or `_[""]` |
 | `Ctrl+C` | Cancel and exit without printing |
 | Arrow keys | Navigate through query history |
 
@@ -317,6 +319,8 @@ Query: Find users with admin role
 
 ### Input Field
 Type your Python expression at the prompt. The result updates in real-time as you type.
+
+When typing inside a bracket expression like `_['']` or `_[""]`, press **Tab** to complete dictionary keys. If multiple keys match, Tab completes to the longest common prefix. If only one key matches, Tab completes the full key.
 
 ### Result Display
 Shows the evaluated result of your query. Errors are displayed in red with helpful messages.

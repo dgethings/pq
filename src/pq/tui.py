@@ -1,5 +1,6 @@
 """Main Textual application module."""
 
+import re
 from typing import Any, ClassVar, cast
 
 from rich.syntax import Syntax
@@ -21,22 +22,100 @@ class QueryInput(BaseInput):
     """Custom input widget with tab support."""
 
     def on_key(self, event) -> None:
-        """Handle key events for tab navigation.
+        """Handle key events for tab completion.
 
         Args:
             event: Key event
         """
         if event.key == "tab":
             event.stop()
-            option_list = cast(QueryApp, self.app).query_one(
-                "#suggestion-list", OptionList
-            )
-            suggestion_box = cast(QueryApp, self.app).query_one(
-                "#suggestion-box", SuggestionBox
-            )
-            if suggestion_box.suggestions:
-                option_list.highlighted = 0
-                option_list.focus()
+            self._handle_tab_completion()
+
+    def _handle_tab_completion(self) -> None:
+        """Handle tab completion for keys in bracket expressions."""
+        value = self.value
+        cursor_pos = self.cursor_position
+
+        before_cursor = value[:cursor_pos]
+
+        single_match = re.search(
+            r"(_(?:\[(?:\d+|'[^']*'|\"[^\"]*\")\])*)\[('?)$", before_cursor
+        )
+        if single_match:
+            base_path = single_match.group(1) or "_"
+            quote = single_match.group(2) or "'"
+            self._complete_key(base_path, "", quote)
+            return
+
+        double_match = re.search(
+            r"(_(?:\[(?:\d+|'[^']*'|\"[^\"]*\")\])*)\[(\"?)$", before_cursor
+        )
+        if double_match:
+            base_path = double_match.group(1) or "_"
+            quote = double_match.group(2) or '"'
+            self._complete_key(base_path, "", quote)
+            return
+
+        single_quote_match = re.search(
+            r"(_(?:\[(?:\d+|'[^']*'|\"[^\"]*\")\])*)\['([^']*)$", before_cursor
+        )
+        if single_quote_match:
+            base_path = single_quote_match.group(1) or "_"
+            partial = single_quote_match.group(2)
+            self._complete_key(base_path, partial, "'")
+            return
+
+        double_quote_match = re.search(
+            r'(_(?:\[(?:\d+|\'[^"]*\'|"[^"]*")\])*)\["([^"]*)$', before_cursor
+        )
+        if double_quote_match:
+            base_path = double_quote_match.group(1) or "_"
+            partial = double_quote_match.group(2)
+            self._complete_key(base_path, partial, '"')
+            return
+
+    def _complete_key(self, base_path: str, partial: str, quote: str) -> None:
+        """Complete the key at the current position.
+
+        Args:
+            base_path: The base path before the bracket (e.g., "_" or "_['items']")
+            partial: The partial key being typed
+            quote: The quote character being used (' or ")
+        """
+        app = cast(QueryApp, self.app)
+        keys = app.fuzzy_matcher.find_keys_at_path(base_path, partial)
+
+        if not keys:
+            return
+
+        if len(keys) == 1:
+            completed_key = keys[0]
+        else:
+            completed_key = app.fuzzy_matcher.get_common_prefix(keys)
+
+        value = self.value
+        cursor_pos = self.cursor_position
+        before_cursor = value[:cursor_pos]
+
+        if partial:
+            if quote == "'":
+                pattern = r"(_(?:\[(?:\d+|'[^']*'|\"[^\"]*\")\])*)\['([^']*)$"
+                match = re.search(pattern, before_cursor)
+            else:
+                pattern = r'(_(?:\[(?:\d+|\'[^"]*\'|"[^"]*")\])*)\["([^"]*)$'
+                match = re.search(pattern, before_cursor)
+
+            if match:
+                new_before = match.group(1) + "[" + quote + completed_key + quote + "]"
+                after_cursor = value[cursor_pos:]
+                self.value = new_before + after_cursor
+                self.cursor_position = len(new_before)
+                return
+
+        new_before = base_path + "[" + quote + completed_key + quote + "]"
+        after_cursor = value[cursor_pos:]
+        self.value = new_before + after_cursor
+        self.cursor_position = len(new_before)
 
 
 class QueryPrompt(Widget):
