@@ -7,9 +7,9 @@ from pq.evaluator import evaluate_query
 
 
 def test_suggestions_integration():
-    """Test the suggestion system integration."""
+    """Test suggestion system integration."""
     print("Loading test data...")
-    data = load_document(file_path=Path("test_data.json"))
+    data = load_document(file_path=Path("tests/test_data.json"))
     print()
 
     path_extractor = PathExtractor(data)
@@ -17,9 +17,9 @@ def test_suggestions_integration():
     fuzzy_matcher = FuzzyMatcher(paths)
 
     test_queries = [
-        "data['items'][0]['n",  # Partial key name
-        "data['items'][0]['a",  # Another partial key
-        "data['metadata']['v",  # Partial metadata key
+        "_['items'][0]['n",  # Partial key name
+        "_['items'][0]['a",  # Another partial key
+        "_['metadata']['v",  # Partial metadata key
         "",  # Empty query
     ]
 
@@ -32,7 +32,7 @@ def test_suggestions_integration():
         print()
 
     print("Testing evaluation with suggestions...")
-    query = "data['items'][0]['name']"
+    query = "_['items'][0]['name']"
     result = evaluate_query(query, data)
     print(f"Query: {query}")
     print(f"Result: {result}")

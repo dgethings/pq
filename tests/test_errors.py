@@ -8,7 +8,7 @@ from pq.evaluator import evaluate_query, QueryEvaluationError
 def test_error_messages():
     """Test that error messages are user-friendly."""
     print("Loading test data...")
-    data = load_document(file_path=Path("test_data.json"))
+    data = load_document(file_path=Path("tests/test_data.json"))
     print()
 
     test_cases = [

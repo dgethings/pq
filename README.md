@@ -115,7 +115,6 @@ cat config.toml | pq-cli --toml
 ```
 
 Only one file type flag may be specified at a time.
-```
 
 ## Usage
 
@@ -155,13 +154,27 @@ sorted(_['employees'], key=lambda x: x['salary'], reverse=True)
 
 # Nested filtering
 [proj['name'] for emp in _['employees'] for proj in emp['projects'] if proj['status'] == 'completed']
+
+# Count occurrences with Counter
+Counter(emp['department'] for emp in _['employees'])
+# Result: Counter({'Engineering': 2, 'Marketing': 1})
+
+# Get most common values
+Counter(emp['department'] for emp in _['employees']).most_common(1)
+# Result: [('Engineering', 2)]
+
+# Create named tuples
+Employee = namedtuple('Employee', 'name department')
+list(map(lambda e: Employee(e['name'], e['department']), _['employees'][:2]))
+# Result: [Employee(name='Alice', department='Engineering'), Employee(name='Bob', department='Marketing')]
 ```
 
 ### Available Functions
 
-The following Python builtins are available in your queries:
+The following Python builtins and collections module functions are available in your queries:
 
 - **Collection operations**: `len`, `sum`, `min`, `max`, `sorted`
+- **Collections module**: `Counter`, `defaultdict`, `OrderedDict`, `deque`, `namedtuple`
 - **Type conversions**: `list`, `dict`, `set`, `tuple`, `str`, `int`, `float`, `bool`
 - **Functional**: `filter`, `map`, `any`, `all`
 - **Iteration**: `range`, `zip`, `enumerate`

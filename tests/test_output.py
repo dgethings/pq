@@ -8,7 +8,7 @@ from pq.loader import load_document
 def test_output_formatting():
     """Test output formatting for different result types."""
     print("Loading test data...")
-    data = load_document(file_path=Path("test_data.json"))
+    data = load_document(file_path=Path("tests/test_data.json"))
     print()
 
     test_cases = [

@@ -8,7 +8,7 @@ from pq.completion import PathExtractor, FuzzyMatcher
 def test_path_completion():
     """Test path completion and fuzzy matching."""
     print("Loading test data...")
-    data = load_document(file_path=Path("test_data.json"))
+    data = load_document(file_path=Path("tests/test_data.json"))
     print(f"Loaded data with keys: {list(data.keys())}")
     print()
 
@@ -62,7 +62,7 @@ def test_next_level_suggestions():
     print()
 
     print("Loading test data...")
-    data = load_document(file_path=Path("test_data.json"))
+    data = load_document(file_path=Path("tests/test_data.json"))
     extractor = PathExtractor(data)
     paths = extractor.get_paths()
     matcher = FuzzyMatcher(paths)

@@ -1,5 +1,6 @@
 """Query evaluation module."""
 
+from collections import Counter, defaultdict, OrderedDict, deque, namedtuple
 from typing import Any
 
 
@@ -29,6 +30,11 @@ ALLOWED_BUILTINS = {
     "abs": abs,
     "round": round,
     "slice": slice,
+    "Counter": Counter,
+    "defaultdict": defaultdict,
+    "OrderedDict": OrderedDict,
+    "deque": deque,
+    "namedtuple": namedtuple,
 }
 
 

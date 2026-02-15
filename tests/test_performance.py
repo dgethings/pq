@@ -9,20 +9,20 @@ from pq.evaluator import evaluate_query
 def test_performance():
     """Test that query evaluation is fast enough."""
     print("Loading test data...")
-    data = load_document(file_path=Path("test_data.json"))
+    data = load_document(file_path=Path("tests/test_data.json"))
     print()
 
     test_queries = [
-        "data",
-        "data['items']",
-        "data['items'][0]",
-        "data['items'][0]['name']",
-        "data['metadata']",
-        "data['metadata']['version']",
-        "[item['name'] for item in data['items']]",
-        "[item for item in data['items'] if item['age'] > 25]",
-        "len(data['items'])",
-        "data['items'][0]['name'] + ' test'",
+        "_",
+        "_['items']",
+        "_['items'][0]",
+        "_['items'][0]['name']",
+        "_['metadata']",
+        "_['metadata']['version']",
+        "[item['name'] for item in _['items']]",
+        "[item for item in _['items'] if item['age'] > 25]",
+        "len(_['items'])",
+        "_['items'][0]['name'] + ' test'",
     ]
 
     print("Testing query evaluation performance...")
