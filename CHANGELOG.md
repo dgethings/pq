@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.11.0 (2026-02-15)
+
+### Features
+
+- Add tab completion for dictionary keys
+  ([`2103cd9`](https://github.com/dgethings/pq-cli/commit/2103cd9a0b6feae657d5d4ef75dc203248f8bdc7))
+
+
 ## v0.10.1 (2026-02-15)
 
 ### Bug Fixes
