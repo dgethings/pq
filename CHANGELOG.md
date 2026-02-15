@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.10.0 (2026-02-15)
+
+### Features
+
+- Add collections module support for queries
+  ([`63036d0`](https://github.com/dgethings/pq-cli/commit/63036d0ce728c7da72e78d772e762ab622d30b9e))
+
+
 ## v0.9.0 (2026-02-15)
 
 ### Features
