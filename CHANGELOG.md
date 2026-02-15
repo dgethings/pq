@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.9.0 (2026-02-15)
+
+### Features
+
+- Refactor CLI flags for file type specification
+  ([`f0f329e`](https://github.com/dgethings/pq-cli/commit/f0f329e2be92c9ff562d34b947539743590ff987))
+
+
 ## v0.8.1 (2026-02-14)
 
 
