@@ -56,6 +56,10 @@ This project uses **python-semantic-release** to automate version management and
 ### IMPORTANT: Only Use These Types
 When creating commits, ONLY use the types listed above. Other types will NOT trigger version bumps and may cause issues with semantic-release.
 
+### Enforcement
+- **Local hook**: Run `scripts/setup-hooks.sh` to install a `commit-msg` hook that rejects non-conventional messages before they are committed.
+- **CI**: The release workflow validates all commit messages since the last tag on every push to main. Non-conventional commits will fail the build.
+
 ## Project Overview
 
 This is a Python CLI/TUI application using:

@@ -31,6 +31,7 @@ dev = [
     "textual-dev>=1.8.0",
     "pytest>=8.0.0",
     "pytest-cov>=4.0.0",
+    "conventional-pre-commit>=4.4.0",
 ]
 
 [tool.semantic_release]

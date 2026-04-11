@@ -32,6 +32,20 @@ jobs:
       - name: Setup | Install Python & Project dependencies
         run: uv sync
 
+      - name: Lint | Validate commit messages
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$LAST_TAG" ]; then
+            COMMITS=$(git log --format="%H" "$LAST_TAG"..HEAD --no-merges)
+          else
+            COMMITS=$(git log --format="%H" HEAD --no-merges)
+          fi
+          for sha in $COMMITS; do
+            echo "Checking commit $sha..."
+            git log -1 --format="%B" "$sha" > /tmp/commit_msg.txt
+            uv run conventional-pre-commit feat fix perf chore docs test refactor style ci build /tmp/commit_msg.txt
+          done
+
       - name: Build | Build next version artifacts
         id: version
         env:
