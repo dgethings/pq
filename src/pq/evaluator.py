@@ -42,7 +42,7 @@ class QueryEvaluationError(Exception):
     """Raised when query evaluation fails."""
 
 
-def evaluate_query(expression: str, data: dict[str, Any]) -> dict[str, Any]:
+def evaluate_query(expression: str, data: Any) -> Any:
     """Safely evaluate a Python expression with data context.
 
     Args:

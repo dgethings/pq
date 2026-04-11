@@ -19,14 +19,14 @@ class DocumentLoadError(Exception):
     """Raised when document loading fails."""
 
 
-def load_document(file_path: Path) -> dict[str, Any]:
+def load_document(file_path: Path) -> Any:
     """Load document from file path.
 
     Args:
         file_path: Path to the file to load
 
     Returns:
-        Parsed document as dictionary
+        Parsed document
 
     Raises:
         DocumentLoadError: If file loading fails
@@ -50,7 +50,7 @@ def content_from_file(file_path: Path) -> tuple[str, FileTypes]:
     return file_path.read_text(encoding="utf-8"), ft
 
 
-def load_content(content: str, file_type: FileTypes, src: str) -> dict[str, Any]:
+def load_content(content: str, file_type: FileTypes, src: str) -> Any:
     """Load content using parser based on file type."""
     match file_type:
         case "json":
@@ -65,27 +65,7 @@ def load_content(content: str, file_type: FileTypes, src: str) -> dict[str, Any]
             raise RuntimeError(f"{file_type} currently not supported")
 
 
-def _validate_dict(data: Any, format_name: str) -> dict[str, Any]:
-    """Validate that parsed data is a dictionary.
-
-    Args:
-        data: Parsed data to validate
-        format_name: Name of the format for error messages
-
-    Returns:
-        The validated data
-
-    Raises:
-        DocumentLoadError: If data is not a dict
-    """
-    if not isinstance(data, dict):
-        raise DocumentLoadError(
-            f"Document must be a {format_name} object (dict), got {type(data).__name__}"
-        )
-    return data
-
-
-def _parse_json(content: str, source: str) -> dict[str, Any]:
+def _parse_json(content: str, source: str) -> Any:
     """Parse JSON content.
 
     Args:
@@ -93,21 +73,20 @@ def _parse_json(content: str, source: str) -> dict[str, Any]:
         source: Source description for error messages
 
     Returns:
-        Parsed JSON as dictionary
+        Parsed JSON content
 
     Raises:
         DocumentLoadError: If JSON is invalid
     """
     try:
-        data = json.loads(content)
-        return _validate_dict(data, "JSON")
+        return json.loads(content)
     except json.JSONDecodeError as e:
         raise DocumentLoadError(
             f"Invalid JSON in {source}: {e.msg} at line {e.lineno}, column {e.colno}"
         )
 
 
-def _parse_yaml(content: str, source: str) -> dict[str, Any]:
+def _parse_yaml(content: str, source: str) -> Any:
     """Parse YAML content.
 
     Args:
@@ -115,19 +94,18 @@ def _parse_yaml(content: str, source: str) -> dict[str, Any]:
         source: Source description for error messages
 
     Returns:
-        Parsed YAML as dictionary
+        Parsed YAML content
 
     Raises:
         DocumentLoadError: If YAML is invalid
     """
     try:
-        data = yaml.safe_load(content)
-        return _validate_dict(data, "YAML")
+        return yaml.safe_load(content)
     except yaml.YAMLError as e:
         raise DocumentLoadError(f"Invalid YAML in {source}: {e}")
 
 
-def _parse_xml(content: str, source: str) -> dict[str, Any]:
+def _parse_xml(content: str, source: str) -> Any:
     """Parse XML content.
 
     Args:
@@ -135,21 +113,20 @@ def _parse_xml(content: str, source: str) -> dict[str, Any]:
         source: Source description for error messages
 
     Returns:
-        Parsed XML as dictionary
+        Parsed XML content
 
     Raises:
         DocumentLoadError: If XML is invalid
     """
     try:
-        data = xmltodict.parse(content)
-        return _validate_dict(data, "XML")
+        return xmltodict.parse(content)
     except expat.ExpatError as e:
         raise DocumentLoadError(f"Invalid XML in {source}: {e}")
     except Exception as e:
         raise DocumentLoadError(f"Failed to parse XML from {source}: {e}")
 
 
-def _parse_toml(content: str, source: str) -> dict[str, Any]:
+def _parse_toml(content: str, source: str) -> Any:
     """Parse TOML content.
 
     Args:
@@ -157,7 +134,7 @@ def _parse_toml(content: str, source: str) -> dict[str, Any]:
         source: Source description for error messages
 
     Returns:
-        Parsed TOML as dictionary
+        Parsed TOML content
 
     Raises:
         DocumentLoadError: If TOML is invalid

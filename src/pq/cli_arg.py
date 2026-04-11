@@ -14,7 +14,7 @@ def version_callback(v: bool) -> None:
 
 
 Query = Annotated[
-    str,
+    str | None,
     typer.Argument(help="Python expression that returns a subset of given file"),
 ]
 FilePath = Annotated[

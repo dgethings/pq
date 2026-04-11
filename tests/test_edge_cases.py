@@ -25,17 +25,18 @@ def test_edge_cases():
         empty_file.unlink()
     print()
 
-    # Test with JSON array (should fail - must be dict)
-    print("Test 2: JSON array (should fail - must be dict)")
+    # Test with JSON array (non-dict is allowed)
+    print("Test 2: JSON array (non-dict is allowed)")
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         f.write("[1, 2, 3]")
         array_file = Path(f.name)
     try:
         data = load_document(file_path=array_file)
-        print(f"Failed: Should have raised DocumentLoadError, got: {data}")
+        result = evaluate_query("_[0]", data)
+        print(f"Success: Loaded JSON array, first element: {result}")
         array_file.unlink()
-    except DocumentLoadError as e:
-        print(f"Success: Got expected error: {e}")
+    except Exception as e:
+        print(f"Failed: {e}")
         array_file.unlink()
     print()
 

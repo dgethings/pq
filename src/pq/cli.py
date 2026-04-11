@@ -46,10 +46,12 @@ def main(
     file_type = consolidate_file_type_flags(
         file_type_json, file_type_yaml, file_type_xml, file_type_toml
     )
-    if file_path is None and not file_type and not Path(query).exists():
+    if file_path is None and not file_type and query and not Path(query).exists():
         raise typer.BadParameter(
             "Must supply file path, or use a file type flag (-j/-y/-x/-t) when reading from stdin"
         )
+    if query is None:
+        raise typer.BadParameter("A query expression is required")
     src = "stdin"
     if Path(query).exists():
         content, file_type = content_from_file(file_path=Path(query))
