@@ -2,6 +2,17 @@
 
 <!-- version list -->
 
+## v0.12.1 (2026-04-18)
+
+### Bug Fixes
+
+- Add ruff to dev dependencies for CI build
+  ([`fbdbb07`](https://github.com/dgethings/pq-cli/commit/fbdbb0712ffc4bdc564dc05201229283138c1535))
+
+- Resolve TUI timer crash and restore tab completion
+  ([`f16fa46`](https://github.com/dgethings/pq-cli/commit/f16fa4628a92bd1e1b20383de3d49d5b61b91223))
+
+
 ## v0.12.0 (2026-03-29)
 
 
